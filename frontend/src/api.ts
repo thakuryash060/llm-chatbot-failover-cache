@@ -20,7 +20,12 @@ export interface HealthResponse {
   cache_enabled: boolean;
 }
 
-const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const defaultApiUrl =
+  typeof window !== "undefined" &&
+  window.location.hostname.endsWith(".vercel.app")
+    ? "https://llm-chatbot-failover-cache.vercel.app"
+    : "http://localhost:8000";
+const rawApiUrl = import.meta.env.VITE_API_URL || defaultApiUrl;
 export const API_BASE_URL = rawApiUrl.replace(/\/+$/, "");
 
 export function formatErrorDetail(detail: unknown, fallback: string): string {

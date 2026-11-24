@@ -56,9 +56,12 @@ class Settings:
         self.database_url: str = raw_db_url
         self.db_path: str = parse_sqlite_path(self.database_url)
 
-        raw_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173")
+        raw_origins = os.getenv(
+            "ALLOWED_ORIGINS",
+            "http://localhost:3000,http://localhost:5173,https://llm-chatbot-failover-cache-29ak.vercel.app,*",
+        )
         self.allowed_origins: list[str] = [
-            o.strip() for o in raw_origins.split(",") if o.strip()
+            o.strip().rstrip("/") for o in raw_origins.split(",") if o.strip()
         ]
 
         sim_val = os.getenv("ENABLE_FAILURE_SIMULATION", "true").strip().lower()
