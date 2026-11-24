@@ -42,8 +42,15 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     app.state.settings = settings
-    init_db(settings.db_path)
-    init_llm_cache(settings.cache_dir)
+    try:
+        init_db(settings.db_path)
+        init_llm_cache(settings.cache_dir)
+    except PermissionError:
+        # Fallback to /tmp if /data is read-only (e.g. serverless environments)
+        settings.db_path = "/tmp/app.db"
+        settings.cache_dir = "/tmp/cache"
+        init_db(settings.db_path)
+        init_llm_cache(settings.cache_dir)
 
     allow_all_origins = "*" in settings.allowed_origins
     app.add_middleware(
@@ -101,6 +108,14 @@ def create_app() -> FastAPI:
 
 try:
     app = create_app()
-except RuntimeError:
-    # Allow importing main module during tests before env vars are monkeypatched if needed
-    app = None  # type: ignore[assignment]
+except RuntimeError as exc:
+    logger.error("App startup failed: %s", exc)
+    # Provide a diagnostic app instead of None so ASGI server does not crash with 500 FUNCTION_INVOCATION_FAILED
+    app = FastAPI(title="Configuration Error")
+
+    @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+    async def config_error_handler(path: str) -> JSONResponse:
+        return JSONResponse(
+            status_code=503,
+            content={"detail": "LLM_API_KEYS not configured in environment variables"},
+        )

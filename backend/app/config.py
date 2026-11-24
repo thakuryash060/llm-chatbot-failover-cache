@@ -51,6 +51,8 @@ class Settings:
         raw_db_url = os.getenv("DATABASE_URL", default_db_url).strip()
         if os.name == "nt" and raw_db_url == "sqlite:////data/app.db":
             raw_db_url = "sqlite:///./data/app.db"
+        elif os.getenv("VERCEL") and raw_db_url == "sqlite:////data/app.db":
+            raw_db_url = "sqlite:////tmp/app.db"
         self.database_url: str = raw_db_url
         self.db_path: str = parse_sqlite_path(self.database_url)
 
@@ -71,6 +73,8 @@ class Settings:
         raw_cache_dir = os.getenv("CACHE_DIR", default_cache_dir).strip()
         if os.name == "nt" and raw_cache_dir == "/data/cache":
             raw_cache_dir = "./data/cache"
+        elif os.getenv("VERCEL") and raw_cache_dir == "/data/cache":
+            raw_cache_dir = "/tmp/cache"
         self.cache_dir: str = raw_cache_dir
 
 

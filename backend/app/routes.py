@@ -34,6 +34,15 @@ async def get_session_lock(session_id: str) -> asyncio.Lock:
         return lock
 
 
+@router.get("/")
+async def root_info() -> Any:
+    return {
+        "service": "LLM Chatbot Backend",
+        "status": "ok",
+        "endpoints": ["/health", "/chat", "/sessions/{session_id}/messages"],
+    }
+
+
 @router.get("/health", response_model=HealthResponse)
 async def health_check(request: Request) -> Any:
     settings = request.app.state.settings
