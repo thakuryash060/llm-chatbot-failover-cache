@@ -6,9 +6,9 @@ Full-stack AI chatbot application built with a **React + TypeScript (Vite)** fro
 
 ## 1. Live URLs
 
-- **Frontend**: `http://localhost:3000` *(Replace with deployed Vercel / Netlify URL)*
-- **Backend**: `http://localhost:8000` *(Replace with deployed Fly.io / Render URL)*
-- **Health Check (`/health`)**: `http://localhost:8000/health` *(Replace with deployed `/health` URL)*
+- **Frontend**: https://llm-chatbot-failover-cache-29ak.vercel.app
+- **Backend**: https://llm-chatbot-failover-cache.vercel.app
+- **Health Check (`/health`)**: https://llm-chatbot-failover-cache.vercel.app/health
 
 ---
 
@@ -92,7 +92,7 @@ npm run dev
 ## 4. Verification
 
 ```bash
-B=http://localhost:8000
+B=https://llm-chatbot-failover-cache.vercel.app
 curl $B/health
 
 curl -X POST $B/chat -H 'Content-Type: application/json' \
