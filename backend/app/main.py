@@ -45,10 +45,11 @@ def create_app() -> FastAPI:
     init_db(settings.db_path)
     init_llm_cache(settings.cache_dir)
 
+    allow_all_origins = "*" in settings.allowed_origins
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.allowed_origins,
-        allow_credentials=True,
+        allow_origins=["*"] if allow_all_origins else settings.allowed_origins,
+        allow_credentials=not allow_all_origins,
         allow_methods=["*"],
         allow_headers=["*"],
     )
